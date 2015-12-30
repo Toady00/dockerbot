@@ -10,7 +10,7 @@ docker push localhost:5000/dockerbot
 docker push localhost:5000/dockerbot:production
 docker push localhost:5000/dockerbot:${GIT_COMMIT}
 
-docker rm dockerbot || echo 'No dockerbot container found to remove. Continuing.'
+docker rm dockerbot &> /dev/null || echo 'No dockerbot container found to remove. Continuing.'
 
 docker run \
   --detach \
@@ -21,4 +21,4 @@ docker run \
   --env "HUBOT_SLACK_TOKEN=xoxb-17520427908-lCKXDp3941tbAdXu3jhRA7EO" \
   localhost:5000/dockerbot:production
 
-docker rmi $(docker images -q --filter "dangling=true") || echo 'No images to clean.'
+docker rmi $(docker images -q --filter "dangling=true") &> /dev/null || echo 'No images to clean.'

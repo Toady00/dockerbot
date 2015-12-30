@@ -14,10 +14,11 @@ docker rm dockerbot &> /dev/null || echo 'No dockerbot container found to remove
 
 docker run \
   --detach \
-  --publish 8080:8088 \
+  --publish 8088:8080 \
   --name dockerbot \
   --restart always \
   --net dockerbot \
+  --env "REDIS_URL=redis://redis.dockerbot:6379" \
   --env "HUBOT_SLACK_TOKEN=xoxb-17520427908-lCKXDp3941tbAdXu3jhRA7EO" \
   localhost:5000/dockerbot:production
 

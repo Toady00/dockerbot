@@ -10,3 +10,7 @@ ADD hubot-scripts.json hubot-scripts.json
 ADD external-scripts.json external-scripts.json
 ADD scripts scripts
 
+EXPOSE 8080
+
+CMD ["-a", "slack"]
+ENTRYPOINT ["bin/hubot"]

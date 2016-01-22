@@ -2,7 +2,7 @@
 
 image_tag=dockerbot
 name=$image_tag
-net=$image_tag
+# net=$image_tag
 env=production
 
 docker build -t $image_tag -f dockerfiles/Dockerfile .
@@ -23,8 +23,8 @@ docker run \
   --publish 8088:8080 \
   --name $name \
   --restart always \
-  --net $net \
-  --env "REDIS_URL=redis://redis.dockerbot:6379" \
+  --net dockerbot_redis \
+  --env "REDIS_URL=redis://redis.dockerbot_redis:6379" \
   --env "HUBOT_SLACK_TOKEN=${HUBOT_SLACK_TOKEN}" \
   $DOCKER_REGISTRY/$image_tag:$env
 

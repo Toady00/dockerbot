@@ -1,25 +1,27 @@
 #!/usr/bin/env bash
 
-docker build -t dockerbot -f dockerfiles/Dockerfile .
-docker tag -f dockerbot dockerbot:production
-docker tag -f dockerbot dockerbot:${GIT_COMMIT}
-docker tag -f dockerbot localhost:5000/dockerbot
-docker tag -f dockerbot localhost:5000/dockerbot:production
-docker tag -f dockerbot localhost:5000/dockerbot:${GIT_COMMIT}
-docker push localhost:5000/dockerbot
-docker push localhost:5000/dockerbot:production
-docker push localhost:5000/dockerbot:${GIT_COMMIT}
+image_tag=dockerbot
+name=$image_tag
+net=$image_tag
+env=production
 
-docker rm dockerbot &> /dev/null || echo 'No dockerbot container found to remove. Continuing.'
+docker build -t $image_tag -f dockerfiles/Dockerfile .
+docker tag -f $image_tag $image_tag:$env
+docker tag -f $image_tag $image_tag:$GIT_COMMIT
+docker tag -f $image_tag $DOCKER_REGISTRY/$image_tag
+docker tag -f $image_tag $DOCKER_REGISTRY/$image_tag:$env
+docker tag -f $image_tag $DOCKER_REGISTRY/$image_tag:$GIT_COMMIT
+docker push $DOCKER_REGISTRY/$image_tag
+docker push $DOCKER_REGISTRY/$image_tag:$env
+docker push $DOCKER_REGISTRY/$image_tag:${GIT_COMMIT}
 
 docker run \
   --detach \
   --publish 8088:8080 \
-  --name dockerbot \
+  --name $name \
   --restart always \
-  --net dockerbot \
+  --net $net \
   --env "REDIS_URL=redis://redis.dockerbot:6379" \
-  --env "HUBOT_SLACK_TOKEN=xoxb-17520427908-lCKXDp3941tbAdXu3jhRA7EO" \
-  localhost:5000/dockerbot:production
+  --env "HUBOT_SLACK_TOKEN=${HUBOT_SLACK_TOKEN}" \
+  $DOCKER_REGISTRY/$image_tag:$env
 
-docker rmi $(docker images -q --filter "dangling=true") &> /dev/null || echo 'No images to clean.'

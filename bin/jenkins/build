@@ -15,6 +15,9 @@ docker push $DOCKER_REGISTRY/$image_tag
 docker push $DOCKER_REGISTRY/$image_tag:$env
 docker push $DOCKER_REGISTRY/$image_tag:${GIT_COMMIT}
 
+docker stop $name || echo "container $name isn't running"
+docker rm -v $name || echo "container $name doesn't exist"
+
 docker run \
   --detach \
   --publish 8088:8080 \
